@@ -1,10 +1,10 @@
 #pragma once
 #include "math_util.hpp"
-#include <boost/assert.hpp>
-#include <boost/operators.hpp>
 #include <cmath>
 #include <limits>
 #include <numeric>
+#include <algorithm>
+#include <cassert>
 
 namespace dmc
 {
@@ -13,18 +13,6 @@ namespace dmc
 
 	template <class Derived, class Scalar, int Dimension>
 	class vector_base
-		: boost::addable<
-			  Derived,
-			  boost::subtractable<
-				  Derived,
-				  boost::multipliable<
-					  Derived,
-					  Scalar,
-					  boost::dividable<
-						  Derived,
-						  Scalar,
-						  boost::equality_comparable<
-							  Derived>>>>>
 	{
 	public:
 		typedef Scalar scalar_type;
@@ -40,15 +28,47 @@ namespace dmc
 			return &values_[0];
 		}
 
+		Derived operator-(const Derived& rhs) const
+		{
+			Derived d;
+			for (int i = 0; i < dimension; ++i)
+				d[i] = (*this)[i] - rhs[i];
+			return d;
+		}
+
+		Derived operator+(const Derived& rhs) const
+		{
+			Derived d;
+			for (int i = 0; i < dimension; ++i)
+				d[i] = (*this)[i] + rhs[i];
+			return d;
+		}
+
+		Derived operator*(scalar_type s) const
+		{
+			Derived d;
+			for (int i = 0; i < dimension; ++i)
+				d[i] = (*this)[i] * s;
+			return d;
+		}
+
+		Derived operator/(scalar_type s) const
+		{
+			Derived d;
+			for (int i = 0; i < dimension; ++i)
+				d[i] = (*this)[i] / s;
+			return d;
+		}		
+
 		scalar_type& operator[](int index)
 		{
-			BOOST_ASSERT(0 <= index && index < dimension);
+			assert(0 <= index && index < dimension);
 			return values_[index];
 		}
 
 		scalar_type operator[](int index) const
 		{
-			BOOST_ASSERT(0 <= index && index < dimension);
+			assert(0 <= index && index < dimension);
 			return values_[index];
 		}
 
@@ -153,7 +173,7 @@ namespace dmc
 
 		auto squared() const
 		{
-			return map([](auto x) { return squared(x); });
+			return map([this](auto x) { return squared(x); });
 		}
 
 		auto norm_l2_sq() const
@@ -169,12 +189,12 @@ namespace dmc
 
 		auto max() const
 		{
-			return reduce([](auto x, auto y) { using std::max; return max(x, y); });
+			return reduce([](auto x, auto y) { return std::max(x, y); });
 		}
 
 		auto min() const
 		{
-			return reduce([](auto x, auto y) { using std::min; return min(x, y); });
+			return reduce([](auto x, auto y) { return std::min(x, y); });
 		}
 
 		bool try_normalize()

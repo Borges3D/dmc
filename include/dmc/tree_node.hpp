@@ -1,11 +1,10 @@
 #pragma once
 #include "vector.hpp"
-#include <boost/noncopyable.hpp>
 
 namespace dmc
 {
 	template <class Scalar>
-	class tree_node : boost::noncopyable
+	class tree_node
 	{
 	public:
 		typedef Scalar scalar_type;

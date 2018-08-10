@@ -201,6 +201,8 @@ namespace dmc
 
 			auto error = scalar_type();
 
+			// std::cout << "depth:" << depth << "/" << config_.maximum_depth << "\n";
+
 			for (int i = 0; i < 8; ++i)
 				error += squared(offset - values[i] - dot_product(grads[i], center - points[i]));
 

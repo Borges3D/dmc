@@ -51,4 +51,22 @@ namespace dmc
 
 		os.write(reinterpret_cast<const char*>(stl_triangles.data()), sizeof(stl_triangle) * stl_triangles.size());
 	}
+
+	template <class Scalar>
+	void write_obj(std::ostream& os, const std::vector<triangle<Scalar>>& triangles)
+	{
+
+		typename std::vector<triangle<Scalar>>::const_iterator i = triangles.begin();
+
+		os << "o\n";
+		for( ; i != triangles.end(); i++ ){
+			os << "v " << i->p1().template cast<float>() << "\n";
+			os << "v " << i->p2().template cast<float>() << "\n";
+			os << "v " << i->p3().template cast<float>() << "\n";
+		}
+		for( unsigned int f = 0; f < triangles.size(); f++ ){
+			os << "f " << ( f * 3 + 1 ) << " " << ( f * 3 + 2 ) << " " << ( f * 3 + 3 ) << "\n";
+		}
+
+	}	
 }
